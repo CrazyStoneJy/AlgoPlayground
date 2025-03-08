@@ -57,20 +57,51 @@ function rpn() {
                 // 处理数字部分
                 curNumber += c
             }
-            
-            // 最后`stack`中可能还有存放的操作符，将其弹出
-            while (stack.length > 0) {
-                let operator = stack.pop()
-                if (operator) {
-                    result.push(operator)
-                }
+        }
+        // 最后`stack`中可能还有存放的操作符，将其弹出
+        while (stack.length > 0) {
+            let operator = stack.pop()
+            if (operator) {
+                result.push(operator)
             }
         }
         return result
     }
     
-    function evaluate() {
-        return 'rpn'
+    /**
+     * 计算逆波兰式
+     * @param expression 
+     * @returns 
+     */
+    function evaluate(expression: string[]) {
+        let i = 0
+        let stack: number[] = []
+        while (i < expression.length) {
+            let c = expression[i]
+            if (operators.includes(c)) {
+                let prev = stack.pop()
+                let lastPrev = stack.pop()
+                switch (c) {
+                    case '+':
+                        stack.push(lastPrev!! + prev!!)
+                        break
+                    case "-":
+                        stack.push(lastPrev!! - prev!!)
+                        break
+                    case "*":
+                        stack.push(lastPrev!! * prev!!)
+                        break
+                    case "/":
+                        stack.push(lastPrev!! / prev!!)
+                        break
+                    default:
+                        break
+                }
+            } else {
+                stack.push(parseFloat(c))
+            }
+        }
+        return stack[0]
     }
     
 
