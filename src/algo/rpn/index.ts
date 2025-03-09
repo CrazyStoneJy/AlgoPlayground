@@ -76,8 +76,7 @@ function rpn() {
     function evaluate(expression: string[]) {
         let i = 0
         let stack: number[] = []
-        while (i < expression.length) {
-            let c = expression[i]
+        expression.forEach((c) => {
             if (operators.includes(c)) {
                 let prev = stack.pop()
                 let lastPrev = stack.pop()
@@ -100,8 +99,8 @@ function rpn() {
             } else {
                 stack.push(parseFloat(c))
             }
-        }
-        return stack[0]
+        })
+        return stack.pop()
     }
     
 

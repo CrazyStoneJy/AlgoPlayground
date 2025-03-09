@@ -20,7 +20,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "vitest",
+    "test": "vitest --inspect-brk --no-file-parallelism --disable-console-intercept ",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
