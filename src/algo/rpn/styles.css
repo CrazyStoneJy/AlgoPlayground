@@ -183,16 +183,9 @@ p {
 .procedure-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
+  justify-content: space-between;
   padding: 10px;
   border-radius: 4px;
-  transition: background-color 0.2s;
-}
-
-.procedure-header:hover {
-  background-color: #f0f0f0;
 }
 
 .procedure-header h4 {
@@ -200,23 +193,18 @@ p {
 }
 
 .collapse-btn {
-  background: none;
-  border: none;
-  font-size: 16px;
   color: #666;
   cursor: pointer;
-  padding: 0 5px;
-  transition: transform 0.2s;
-}
-
-.collapse-btn.expanded {
-  transform: rotate(0deg);
-}
-
-.collapse-btn:not(.expanded) {
-  transform: rotate(-90deg);
+  font-size: 14px;
+  user-select: none;
+  transition: color 0.2s;
 }
 
 .collapse-btn:hover {
   color: #2196F3;
+}
+
+.collapse-btn.expanded,
+.collapse-btn:not(.expanded) {
+  transform: none;
 } 

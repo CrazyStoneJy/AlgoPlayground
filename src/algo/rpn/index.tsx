@@ -73,11 +73,14 @@ const RPNCalculator: React.FC = () => {
 
             {procedure && (
               <div className="procedure-section">
-                <div className="procedure-header" onClick={() => setIsParseExpanded(!isParseExpanded)}>
+                <div className="procedure-header">
                   <h4>Parse Process</h4>
-                  <button className={`collapse-btn ${isParseExpanded ? 'expanded' : ''}`}>
-                    {isParseExpanded ? '▼' : '▶'}
-                  </button>
+                  <span 
+                    className="collapse-btn"
+                    onClick={() => setIsParseExpanded(!isParseExpanded)}
+                  >
+                    {isParseExpanded ? 'Collapse ▼' : 'Expand ▲'}
+                  </span>
                 </div>
                 {isParseExpanded && (
                   <div className="procedure-steps">
@@ -121,11 +124,14 @@ const RPNCalculator: React.FC = () => {
 
         {evaluateProcedure && (
           <div className="procedure-section">
-            <div className="procedure-header" onClick={() => setIsCalcExpanded(!isCalcExpanded)}>
+            <div className="procedure-header">
               <h4>Calculation Process</h4>
-              <button className={`collapse-btn ${isCalcExpanded ? 'expanded' : ''}`}>
-                {isCalcExpanded ? '▼' : '▶'}
-              </button>
+              <span 
+                className="collapse-btn"
+                onClick={() => setIsCalcExpanded(!isCalcExpanded)}
+              >
+                {isCalcExpanded ? 'Collapse ▼' : 'Expand ▲'}
+              </span>
             </div>
             {isCalcExpanded && (
               <div className="procedure-steps">
