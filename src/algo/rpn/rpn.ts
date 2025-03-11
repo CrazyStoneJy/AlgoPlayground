@@ -27,6 +27,8 @@ function rpn() {
             if (operators.includes(c)) {
                 // setp1 将暂存在curNumber中的数字，存放到最终`result`中
                 result.push(curNumber)
+                // console.log("result: " + result)
+                
                 // step2 重制curNumber
                 curNumber = ''
     
@@ -37,18 +39,16 @@ function rpn() {
                     // for example: `current operator`为+  `previous operator`为x, current <= previous，则将`current operator`
                     // 压入到stack顶部，否则将stack中的操作符弹出，准备进行表达式生成
                     const prev = stack[stack.length - 1]
-                    if (compareToPrior(c, prev) > 0) {
-                        let index = stack.length - 1
-                        while (compareToPrior(c, stack[index]) > 0) {
+                    if (compareToPrior(c, prev) <= 0) {
+                        while (stack.length > 0 && compareToPrior(c, stack[stack.length - 1]) <= 0) {
                             let operator: string | undefined = stack.pop()
                             if (operator) {
                                 result.push(operator)
+                                // console.log("result: " + result)
                             }
                         }
-                        stack.push(c)
-                    } else {
-                        stack.push(c)
                     }
+                    stack.push(c)
                 } else {
                     // 如果stack为空，则将该操作符压入到stack顶
                     stack.push(c)
@@ -58,6 +58,10 @@ function rpn() {
                 curNumber += c
             }
         }
+        // 先看curNumber中是否还有值
+        if (curNumber !== '') {
+            result.push(curNumber)
+        }
         // 最后`stack`中可能还有存放的操作符，将其弹出
         while (stack.length > 0) {
             let operator = stack.pop()
@@ -65,6 +69,7 @@ function rpn() {
                 result.push(operator)
             }
         }
+        // console.log("result: " + result)
         return result
     }
     
