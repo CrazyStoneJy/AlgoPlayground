@@ -1,6 +1,7 @@
-function rpn() {
+function RPN() {
 
     const operators = ["+" , "-", "*", "/"]
+    const brackets = ["(", ")"]
 
     function getPrior(operator: string): number {
         if (["+", "-"].includes(operator)) {
@@ -9,67 +10,83 @@ function rpn() {
         if (["*", "/"].includes(operator)) {
             return 1
         }
+        if (["(", ")"].includes(operator)) {
+            return 2
+        }
         return 0
     }
     
-    function compareToPrior(operator1: string, operator2: string): number {
-        return getPrior(operator1) - getPrior(operator2)
-    }
-    
     const parse = (expression: string): string[] => {
-        // 表达式生成
         let result: string[] = []
-        // 存放操作符
         let stack: string[] = []
         let curNumber = ''
+
         for (let i = 0; i < expression.length; i++) {
             let c = expression[i]
             if (operators.includes(c)) {
-                // setp1 将暂存在curNumber中的数字，存放到最终`result`中
-                result.push(curNumber)
-                // console.log("result: " + result)
-                
-                // step2 重制curNumber
-                curNumber = ''
-    
-                // step3 开始处理操作符
-                // 判断stack是否为空
-                if (stack.length > 0) {
-                    // 判断当前的操作符的优先级是不是不高于上个操作符的优先级，
-                    // for example: `current operator`为+  `previous operator`为x, current <= previous，则将`current operator`
-                    // 压入到stack顶部，否则将stack中的操作符弹出，准备进行表达式生成
-                    const prev = stack[stack.length - 1]
-                    if (compareToPrior(c, prev) <= 0) {
-                        while (stack.length > 0 && compareToPrior(c, stack[stack.length - 1]) <= 0) {
-                            let operator: string | undefined = stack.pop()
-                            if (operator) {
-                                result.push(operator)
-                                // console.log("result: " + result)
-                            }
-                        }
+                // 只有当curNumber不为空时才加入结果
+                if (curNumber !== '') {
+                    result.push(curNumber)
+                    curNumber = ''
+                }
+
+                // 处理操作符
+                while (stack.length > 0 && 
+                       stack[stack.length - 1] !== '(' && 
+                       getPrior(stack[stack.length - 1]) >= getPrior(c)) {
+                    let operator = stack.pop()
+                    if (operator) {
+                        result.push(operator)
+                    }
+                }
+                stack.push(c)
+            } else if (brackets.includes(c)) {
+                if ("(" === c) {
+                    if (curNumber !== '') {
+                        result.push(curNumber)
+                        curNumber = ''
                     }
                     stack.push(c)
-                } else {
-                    // 如果stack为空，则将该操作符压入到stack顶
-                    stack.push(c)
+                } else if (")" === c) {
+                    if (curNumber !== '') {
+                        result.push(curNumber)
+                        curNumber = ''
+                    }
+                    // 弹出栈内运算符直到遇到左括号
+                    while (stack.length > 0 && stack[stack.length - 1] !== '(') {
+                        let operator = stack.pop()
+                        if (operator) {
+                            result.push(operator)
+                        }
+                    }
+                    // 弹出左括号
+                    if (stack.length > 0 && stack[stack.length - 1] === '(') {
+                        stack.pop()
+                    } else {
+                        throw new Error('Mismatched parentheses')
+                    }
                 }
-            } else {
-                // 处理数字部分
+            } else if (c !== ' ') { // 忽略空格
                 curNumber += c
             }
         }
-        // 先看curNumber中是否还有值
+
+        // 处理最后的数字
         if (curNumber !== '') {
             result.push(curNumber)
         }
-        // 最后`stack`中可能还有存放的操作符，将其弹出
+
+        // 处理剩余的操作符
         while (stack.length > 0) {
-            let operator = stack.pop()
+            const operator = stack.pop()
+            if (operator === '(') {
+                throw new Error('Mismatched parentheses')
+            }
             if (operator) {
                 result.push(operator)
             }
         }
-        // console.log("result: " + result)
+
         return result
     }
     
@@ -78,8 +95,7 @@ function rpn() {
      * @param expression 
      * @returns 
      */
-    function evaluate(expression: string[]) {
-        let i = 0
+    function evaluate(expression: string[]): number | null {
         let stack: number[] = []
         expression.forEach((c) => {
             if (operators.includes(c)) {
@@ -105,7 +121,7 @@ function rpn() {
                 stack.push(parseFloat(c))
             }
         })
-        return stack.pop()
+        return stack.pop() || null
     }
     
 
@@ -115,6 +131,7 @@ function rpn() {
     }
 }
 
+const rpn = RPN()
 export {
     rpn
 }
