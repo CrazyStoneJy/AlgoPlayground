@@ -1,3 +1,5 @@
+import { ParseProcedureResult, EvaluateProcedureResult } from "./types"
+
 function RPN() {
 
     const operators = ["+" , "-", "*", "/"]
@@ -15,8 +17,10 @@ function RPN() {
         }
         return 0
     }
-    
-    const parse = (expression: string): string[] => {
+
+    const parse = (expression: string): ParseProcedureResult => {
+        let procedureResult = []
+        let procedureStack = []
         let result: string[] = []
         let stack: string[] = []
         let curNumber = ''
@@ -28,6 +32,9 @@ function RPN() {
                 if (curNumber !== '') {
                     result.push(curNumber)
                     curNumber = ''
+                    // procedure
+                    procedureResult.push([...result])
+                    procedureStack.push([...stack])
                 }
 
                 // 处理操作符
@@ -38,8 +45,14 @@ function RPN() {
                     if (operator) {
                         result.push(operator)
                     }
+                    // procedure
+                    procedureResult.push([...result])
+                    procedureStack.push([...stack])
                 }
                 stack.push(c)
+                // procedure
+                procedureResult.push([...result])
+                procedureStack.push([...stack])
             } else if (brackets.includes(c)) {
                 if ("(" === c) {
                     if (curNumber !== '') {
@@ -47,10 +60,16 @@ function RPN() {
                         curNumber = ''
                     }
                     stack.push(c)
+                    // procedure
+                    procedureResult.push([...result])
+                    procedureStack.push([...stack])
                 } else if (")" === c) {
                     if (curNumber !== '') {
                         result.push(curNumber)
                         curNumber = ''
+                        // procedure
+                        procedureResult.push([...result])
+                        procedureStack.push([...stack])
                     }
                     // 弹出栈内运算符直到遇到左括号
                     while (stack.length > 0 && stack[stack.length - 1] !== '(') {
@@ -58,6 +77,9 @@ function RPN() {
                         if (operator) {
                             result.push(operator)
                         }
+                        // procedure
+                        procedureResult.push([...result])
+                        procedureStack.push([...stack])
                     }
                     // 弹出左括号
                     if (stack.length > 0 && stack[stack.length - 1] === '(') {
@@ -65,6 +87,9 @@ function RPN() {
                     } else {
                         throw new Error('Mismatched parentheses')
                     }
+                    // procedure
+                    procedureResult.push([...result])
+                    procedureStack.push([...stack])
                 }
             } else if (c !== ' ') { // 忽略空格
                 curNumber += c
@@ -74,6 +99,9 @@ function RPN() {
         // 处理最后的数字
         if (curNumber !== '') {
             result.push(curNumber)
+            // procedure
+            procedureResult.push([...result])
+            procedureStack.push([...stack])
         }
 
         // 处理剩余的操作符
@@ -85,9 +113,16 @@ function RPN() {
             if (operator) {
                 result.push(operator)
             }
+             // procedure
+            procedureResult.push([...result])
+            procedureStack.push([...stack])
         }
 
-        return result
+        return {
+            result,
+            procedureResult,
+            procedureStack
+        }
     }
     
     /**
@@ -95,33 +130,56 @@ function RPN() {
      * @param expression 
      * @returns 
      */
-    function evaluate(expression: string[]): number | null {
-        let stack: number[] = []
-        expression.forEach((c) => {
-            if (operators.includes(c)) {
-                let prev = stack.pop()
-                let lastPrev = stack.pop()
-                switch (c) {
+    function evaluate(expression: string[]): EvaluateProcedureResult {
+        let stack: number[] = [];
+        let procedureStacks: number[][] = [];
+        let procedureTokens: string[] = [];
+        let procedureOperations: string[] = [];
+
+        expression.forEach((token) => {
+            if (operators.includes(token)) {
+                const b = stack.pop()!;
+                const a = stack.pop()!;
+                let result: number;
+
+                switch (token) {
                     case '+':
-                        stack.push(lastPrev!! + prev!!)
-                        break
+                        result = a + b;
+                        stack.push(result);
+                        procedureOperations.push(`${a} + ${b} = ${result}`);
+                        break;
                     case "-":
-                        stack.push(lastPrev!! - prev!!)
-                        break
+                        result = a - b;
+                        stack.push(result);
+                        procedureOperations.push(`${a} - ${b} = ${result}`);
+                        break;
                     case "*":
-                        stack.push(lastPrev!! * prev!!)
-                        break
+                        result = a * b;
+                        stack.push(result);
+                        procedureOperations.push(`${a} * ${b} = ${result}`);
+                        break;
                     case "/":
-                        stack.push(lastPrev!! / prev!!)
-                        break
-                    default:
-                        break
+                        if (b === 0) throw new Error('Division by zero');
+                        result = a / b;
+                        stack.push(result);
+                        procedureOperations.push(`${a} / ${b} = ${result}`);
+                        break;
                 }
             } else {
-                stack.push(parseFloat(c))
+                stack.push(parseFloat(token));
+                procedureOperations.push(`Push number: ${token}`);
             }
-        })
-        return stack.pop() || null
+            
+            procedureTokens.push(token);
+            procedureStacks.push([...stack]);
+        });
+
+        return {
+            result: stack.pop() || null,
+            procedureTokens,
+            procedureStacks,
+            procedureOperations
+        };
     }
     
 

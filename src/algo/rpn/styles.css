@@ -80,4 +80,143 @@ p {
   text-align: center;
   color: #666;
   margin: 10px 0;
+}
+
+.procedure-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.procedure-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.procedure-step {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #4CAF50;
+  transition: transform 0.2s;
+}
+
+.procedure-step:hover {
+  transform: translateX(5px);
+}
+
+.procedure-step:nth-child(3n+1) {
+  border-left-color: #4CAF50;
+}
+
+.procedure-step:nth-child(3n+2) {
+  border-left-color: #2196F3;
+}
+
+.procedure-step:nth-child(3n+3) {
+  border-left-color: #9C27B0;
+}
+
+.step-number {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.output-stack,
+.operator-stack {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stack-label {
+  min-width: 120px;
+  font-weight: 500;
+  color: #666;
+}
+
+.stack-content {
+  font-family: monospace;
+  background-color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  flex-grow: 1;
+}
+
+.current-token,
+.operation,
+.number-stack {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.operation .stack-content {
+    color: #2196F3;
+    font-weight: 500;
+}
+
+.current-token .stack-content {
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+.procedure-step:hover .operation .stack-content {
+    background-color: #e3f2fd;
+}
+
+.procedure-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.procedure-header:hover {
+  background-color: #f0f0f0;
+}
+
+.procedure-header h4 {
+  margin: 0;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #666;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: transform 0.2s;
+}
+
+.collapse-btn.expanded {
+  transform: rotate(0deg);
+}
+
+.collapse-btn:not(.expanded) {
+  transform: rotate(-90deg);
+}
+
+.collapse-btn:hover {
+  color: #2196F3;
 } 
